@@ -1,6 +1,15 @@
 let recognition;
 const output = document.getElementById('output');
 
+function falarTexto(texto) {
+  const sintese = new SpeechSynthesisUtterance();
+  sintese.text = texto;
+  sintese.lang = 'pt-BR';
+  sintese.rate = 1;      // velocidade
+  sintese.pitch = 1;     // tom
+  window.speechSynthesis.speak(sintese);
+}
+
 document.getElementById('startBtn').addEventListener('click', () => {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -17,8 +26,8 @@ document.getElementById('startBtn').addEventListener('click', () => {
     const resultado = event.results[event.results.length - 1][0].transcript;
     output.textContent = `Você disse: "${resultado}"`;
 
-    // Aqui, futuramente, você poderá enviar a resposta diretamente ao iframe ou backend
-    console.log('Reconhecido:', resultado);
+    // Falar o texto reconhecido
+    falarTexto(resultado);
   };
 
   recognition.onerror = (event) => {
