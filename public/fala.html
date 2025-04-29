@@ -2,21 +2,42 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Falar com a IA</title>
+  <title>Conversa com a IA</title>
   <style>
-    body, html { margin: 0; height: 100%; }
-    iframe { width: 100%; height: 90%; border: none; }
-    #controls { padding: 10px; text-align: center; }
-    button { padding: 10px 20px; font-size: 16px; }
+    body, html { margin: 0; height: 100%; font-family: sans-serif; }
+    iframe { width: 100%; height: 70%; border: none; }
+    #controls {
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #output {
+      text-align: center;
+      font-size: 20px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
+<iframe id="webchat"
+  src="https://copilotstudio.microsoft.com/environments/Default-xxx/bots/cref1_amigo/webchat?__version__=2">
+</iframe>
+
 <div id="controls">
-  <button id="falaBtn">🎤 Falar com a IA</button>
+  <button id="startBtn" style="background-color: green; color: white;">🎤 Começar Conversa</button>
+  <button id="stopBtn" style="background-color: red; color: white;">⛔ Parar Conversa</button>
 </div>
 
-<iframe id="webchat" src="https://copilotstudio.microsoft.com/environments/Default-xxx/bots/cref1_amigo/webchat?__version__=2"></iframe>
+<div id="output">Você ainda não disse nada.</div>
 
 <script src="scripts.js"></script>
 </body>
