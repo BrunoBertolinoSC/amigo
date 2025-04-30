@@ -5,8 +5,8 @@ function falarTexto(texto) {
   const sintese = new SpeechSynthesisUtterance();
   sintese.text = texto;
   sintese.lang = 'pt-BR';
-  sintese.rate = 1;      // velocidade
-  sintese.pitch = 1;     // tom
+  sintese.rate = 1;
+  sintese.pitch = 1;
   window.speechSynthesis.speak(sintese);
 }
 
@@ -25,9 +25,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   recognition.onresult = (event) => {
     const resultado = event.results[event.results.length - 1][0].transcript;
     output.textContent = `Você disse: "${resultado}"`;
-
-    // Falar o texto reconhecido
-    falarTexto(resultado);
+    falarTexto(resultado); // IA responde falando o que entendeu
   };
 
   recognition.onerror = (event) => {
@@ -40,7 +38,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   };
 
   recognition.start();
-  output.textContent = 'Escutando...';
+  output.textContent = '🎤 Escutando...';
 });
 
 document.getElementById('stopBtn').addEventListener('click', () => {
