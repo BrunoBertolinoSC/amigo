@@ -1,4 +1,3 @@
-version: 1
 frontend:
   phases:
     preBuild:
@@ -11,5 +10,9 @@ frontend:
     baseDirectory: .
     files:
       - '**/*'
+    # 👇 define index.html como a página principal
+    # caso você use rotas baseadas em HTML5
+    fallback:
+      rewrite: index.html
   cache:
     paths: []
