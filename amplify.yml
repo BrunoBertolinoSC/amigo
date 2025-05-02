@@ -1,18 +1,23 @@
+version: 1
 frontend:
   phases:
     preBuild:
-      commands:
-        - echo "Nenhuma dependência"
+      commands: []
     build:
-      commands:
-        - echo "Build simples"
+      commands: []
   artifacts:
     baseDirectory: .
     files:
-      - '**/*.html'
-      - '**/*.js'
-      - '**/*.css'
-    fallback:
-      rewrite: index.html
+      - '**/*'
   cache:
     paths: []
+  redirects:
+    - source: "/"
+      target: "/index.html"
+      status: 200
+    - source: "/voz.html"
+      target: "/voz.html"
+      status: 200
+    - source: "/texto.html"
+      target: "/texto.html"
+      status: 200
