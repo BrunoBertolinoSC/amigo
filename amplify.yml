@@ -9,9 +9,9 @@ frontend:
   artifacts:
     baseDirectory: .
     files:
-      - '**/*'
-    # 👇 define index.html como a página principal
-    # caso você use rotas baseadas em HTML5
+      - '**/*.html'
+      - '**/*.js'
+      - '**/*.css'
     fallback:
       rewrite: index.html
   cache:
