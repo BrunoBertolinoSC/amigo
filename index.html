@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCC - Assistente IA</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary-color: #f3f4f6;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #f0f4ff, #e0e7ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 640px) {
+            .mode-buttons {
+                flex-direction: row;
+            }
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .voice-controls {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .voice-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .indicator-dot {
+            width: 1rem;
+            height: 1rem;
+            background-color: #ef4444;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .transcript {
+            background-color: var(--white);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 32rem;
+            margin: 0 auto 1rem;
+        }
+
+        .transcript p {
+            color: var(--text-color);
+            font-style: italic;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .voice-selector {
+            max-width: 32rem;
+            margin: 0 auto 2rem;
+        }
+
+        .voice-selector label {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .voice-selector-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .voice-selector-controls {
+                flex-direction: row;
+            }
+        }
+
+        select {
+            flex-grow: 1;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+
+        .voice-message {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+        }
+
+        .ia-container {
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            height: 500px;
+            max-width: 64rem;
+            margin: 0 auto;
+        }
+
+        .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9fafb;
+        }
+
+        .placeholder p {
+            color: var(--light-text);
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+            }
+        }
+
+        .footer-info {
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-info {
+                margin-bottom: 0;
+            }
+        }
+
+        .footer-info h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-info p {
+            color: #e0e7ff;
+        }
+
+        .footer-meta {
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-meta {
+                text-align: right;
+            }
+        }
+
+        .footer-meta p {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-meta span {
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-links {
+                justify-content: flex-end;
+            }
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: #e0e7ff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Assistente IA - TCC</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="mode-buttons">
+            <button id="text-mode" class="btn btn-secondary">Modo Escrita</button>
+            <button id="voice-mode" class="btn btn-secondary">Modo Voz</button>
+        </div>
+
+        <div id="error-message" style="display: none;" class="transcript">
+            <p id="error-text"></p>
+        </div>
+
+        <div id="voice-controls" class="voice-controls">
+            <div class="voice-indicator">
+                <div id="indicator-dot" class="indicator-dot"></div>
+                <span id="ai-status">IA em espera</span>
+            </div>
+            <div id="transcript-container" class="transcript" style="display: none;">
+                <p id="transcript-text"></p>
+            </div>
+            <button id="stop-voice" class="btn btn-danger">Parar Conversa por Voz</button>
+        </div>
+
+        <div class="voice-selector">
+            <label for="voice-select">Selecionar Voz da IA:</label>
+            <div class="voice-selector-controls">
+                <select id="voice-select">
+                    <option value="">Selecione uma voz</option>
+                    <option value="pt-BR-Female">Google Portuguese Female</option>
+                    <option value="pt-BR-Male">Google Portuguese Male</option>
+                    <option value="Microsoft-Maria">Microsoft Maria</option>
+                    <option value="Microsoft-Daniel">Microsoft Daniel</option>
+                </select>
+                <button id="test-voice" class="btn btn-primary">Testar Voz</button>
+            </div>
+            <p id="voice-message" class="voice-message"></p>
+        </div>
+
+        <div class="ia-container">
+            <div id="ia-placeholder" class="placeholder">
+                <p>Selecione um modo de interação acima</p>
+            </div>
+            <iframe id="ia-iframe" style="display: none;" 
+                src="https://defaultdb1a52f532674ea6aaea85cf6f15e6.c7.environment.api.powerplatform.com/copilotstudio/dataverse-backed/authenticated/bots/cref1_agente1/conversations?api-version=2022-03-01-preview"
+                title="Microsoft Copilot Studio"
+                allow="microphone; camera"></iframe>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h2>TCC - Assistente IA</h2>
+                    <p>Integração de IA conversacional com interface de voz</p>
+                </div>
+                <div class="footer-meta">
+                    <p>© 2025 - Trabalho de Conclusão de Curso</p>
+                    <p>Desenvolvido por <span>Seu Nome</span></p>
+                    <div class="footer-links">
+                        <a href="https://github.com/seu-usuario/tcc-ia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <a href="mailto:seu-email@exemplo.com">Contato</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos da interface
+            const textModeBtn = document.getElementById('text-mode');
+            const voiceModeBtn = document.getElementById('voice-mode');
+            const voiceControls = document.getElementById('voice-controls');
+            const stopVoiceBtn = document.getElementById('stop-voice');
+            const iaPlaceholder = document.getElementById('ia-placeholder');
+            const iaIframe = document.getElementById('ia-iframe');
+            const indicatorDot = document.getElementById('indicator-dot');
+            const aiStatus = document.getElementById('ai-status');
+            const transcriptContainer = document.getElementById('transcript-container');
+            const transcriptText = document.getElementById('transcript-text');
+            const voiceSelect = document.getElementById('voice-select');
+            const testVoiceBtn = document.getElementById('test-voice');
+            const voiceMessage = document.getElementById('voice-message');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+
+            // Estado da aplicação
+            let activeMode = null;
+            let isListening = false;
+            let isAiSpeaking = false;
+            let recognition = null;
+            let selectedVoice = '';
+
+            // Inicializar reconhecimento de voz se disponível
+            function initSpeechRecognition() {
+                if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    recognition.lang = 'pt-BR';
+
+                    recognition.onresult = function(event) {
+                        const result = event.results[event.results.length - 1];
+                        const transcript = result[0].transcript;
+                        transcriptText.textContent = `"${transcript}"`;
+                        transcriptContainer.style.display = 'block';
+
+                        if (result.isFinal && !isAiSpeaking) {
+                            // Simulação de resposta da IA
+                            setTimeout(() => {
+                                speakAiResponse("Olá, eu sou a IA do seu TCC. Como posso ajudar?");
+                            }, 1000);
+                        }
+                    };
+
+                    recognition.onerror = function(event) {
+                        console.error('Erro no reconhecimento de voz:', event.error);
+                        showError(`Erro no reconhecimento de voz: ${event.error}`);
+                        isListening = false;
+                        updateAiStatus();
+
+                        if (activeMode === 'voice') {
+                            setTimeout(() => {
+                                if (activeMode === 'voice') {
+                                    startListening();
+                                }
+                            }, 1000);
+                        }
+                    };
+
+                    recognition.onend = function() {
+                        if (activeMode === 'voice' && !isAiSpeaking) {
+                            try {
+                                recognition.start();
+                            } catch (error) {
+                                console.error('Erro ao reiniciar reconhecimento:', error);
+                                isListening = false;
+                                updateAiStatus();
+                            }
+                        }
+                    };
+                } else {
+                    showError('Reconhecimento de voz não suportado neste navegador');
+                }
+            }
+
+            // Inicializar vozes disponíveis
+            function initVoices() {
+                if ('speechSynthesis' in window) {
+                    const loadVoices = () => {
+                        const voices = window.speechSynthesis.getVoices();
+                        
+                        // Filtrar vozes para priorizar português
+                        const ptVoices = voices.filter(voice => 
+                            voice.lang.includes('pt') || 
+                            voice.name.toLowerCase().includes('pt') ||
+                            voice.name.toLowerCase().includes('portuguese') ||
+                            voice.name.includes('Maria') ||
+                            voice.name.includes('Daniel')
+                        );
+                        
+                        // Limpar select
+                        voiceSelect.innerHTML = '';
+                        
+                        // Adicionar opção padrão
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Selecione uma voz';
+                        voiceSelect.appendChild(defaultOption);
+                        
+                        // Adicionar vozes disponíveis
+                        const allVoices = [...ptVoices, ...voices.filter(voice => !ptVoices.includes(voice))];
+                        allVoices.forEach(voice => {
+                            const option = document.createElement('option');
+                            option.value = voice.name;
+                            option.textContent = `${voice.name} (${voice.lang})`;
+                            voiceSelect.appendChild(option);
+                        });
+                        
+                        // Selecionar primeira voz em português se disponível
+                        if (ptVoices.length > 0 && !selectedVoice) {
+                            voiceSelect.value = ptVoices[0].name;
+                            selectedVoice = ptVoices[0].name;
+                        }
+                    };
+                    
+                    // Carregar vozes
+                    loadVoices();
+                    
+                    // Recarregar quando a lista de vozes mudar
+                    window.speechSynthesis.onvoiceschanged = loadVoices;
+                } else {
+                    showError('Síntese de voz não suportada neste navegador');
+                }
+            }
+
+            // Iniciar modo de texto
+            function startTextMode() {
+                activeMode = 'text';
+                updateModeButtons();
+                stopListening();
+                voiceControls.style.display = 'none';
+                iaPlaceholder.style.display = 'none';
+                iaIframe.style.display = 'block';
+            }
+
+            // Iniciar modo de voz
+            function startVoiceMode() {
+                activeMode = 'voice';
+                updateModeButtons();
+                voiceControls.style.display = 'flex';
+                iaPlaceholder.style.display = 'none';
+                iaIframe.style.display = 'block';
+                startListening();
+            }
+
+            // Iniciar reconhecimento de voz
+            function startListening() {
+                if (recognition) {
+                    try {
+                        recognition.start();
+                        isListening = true;
+                        updateAiStatus();
+                        hideError();
+                    } catch (error) {
+                        console.error('Erro ao iniciar reconhecimento de voz:', error);
+                        showError('Erro ao iniciar reconhecimento de voz. Tente novamente.');
+                        isListening = false;
+                        updateAiStatus();
+                    }
+                }
+            }
+
+            // Parar reconhecimento de voz
+            function stopListening() {
+                if (recognition) {
+                    try {
+                        recognition.stop();
+                        isListening = false;
+                        updateAiStatus();
+                    } catch (error) {
+                        console.error('Erro ao parar reconhecimento:', error);
+                    }
+                }
+            }
+
+            // Parar conversa por voz
+            function stopVoiceConversation() {
+                stopListening();
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    isAiSpeaking = false;
+                    updateAiStatus();
+                }
+                transcriptContainer.style.display = 'none';
+                transcriptText.textContent = '';
+            }
+
+            // Fazer a IA falar
+            function speakAiResponse(text) {
+                if ('speechSynthesis' in window) {
+                    // Parar qualquer fala em andamento
+                    window.speechSynthesis.cancel();
+                    
+                    // Criar um novo objeto de fala
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    
+                    // Configurar a voz selecionada
+                    const voices = window.speechSynthesis.getVoices();
+                    const selectedVoiceObj = voices.find(voice => voice.name === selectedVoice);
+                    
+                    if (selectedVoiceObj) {
+                        utterance.voice = selectedVoiceObj;
+                    } else if (voices.length > 0) {
+                        utterance.voice = voices[0];
+                    }
+                    
+                    // Configurar propriedades adicionais
+                    utterance.rate = 1.0;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+                    
+                    // Configurar eventos de fala
+                    utterance.onstart = function() {
+                        isAiSpeaking = true;
+                        updateAiStatus();
+                        
+                        // Pausar o reconhecimento enquanto a IA está falando
+                        if (recognition && isListening) {
+                            try {
+                                recognition.stop();
+                            } catch (error) {
+                                console.error('Erro ao pausar reconhecimento:', error);
+                            }
+                        }
+                    };
+                    
+                    utterance.onend = function() {
+                        isAiSpeaking = false;
+                        voiceMessage.textContent = '';
+                        updateAiStatus();
+                        
+                        // Retomar o reconhecimento após a IA terminar de falar
+                        if (recognition && activeMode === 'voice') {
+                            try {
+                                recognition.start();
+                                isListening = true;
+                                updateAiStatus();
+                            } catch (error) {
+                                console.error('Erro ao retomar reconhecimento:', error);
+                                
+                                // Tentar novamente após um breve intervalo
+                                setTimeout(() => {
+                                    if (activeMode === 'voice') {
+                                        try {
+                                            recognition.start();
+                                            isListening = true;
+                                            updateAiStatus();
+                                        } catch (innerError) {
+                                            console.error('Erro ao retomar reconhecimento (segunda tentativa):', innerError);
+                                        }
+                                    }
+                                }, 500);
+                            }
+                        }
+                    };
+                    
+                    utterance.onerror = function(event) {
+                        console.error('Erro na síntese de voz:', event);
+                        isAiSpeaking = false;
+                        voiceMessage.textContent = '';
+                        showError('Erro na síntese de voz. Tente novamente.');
+                        updateAiStatus();
+                        
+                        // Retomar o reconhecimento após erro
+                        if (recognition && activeMode === 'voice') {
+                            try {
+                                recognition.start();
+                                isListening = true;
+                                updateAiStatus();
+                            } catch (error) {
+                                console.error('Erro ao retomar reconhecimento após erro de síntese:', error);
+                            }
+                        }
+                    };
+                    
+                    // Iniciar a fala
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            // Testar a voz atual
+            function testCurrentVoice() {
+                voiceMessage.textContent = 'Testando voz selecionada...';
+                speakAiResponse("Olá, esta é a voz selecionada para a IA do seu TCC.");
+            }
+
+            // Atualizar botões de modo
+            function updateModeButtons() {
+                if (activeMode === 'text') {
+                    textModeBtn.className = 'btn btn-primary';
+                    voiceModeBtn.className = 'btn btn-secondary';
+                } else if (activeMode === 'voice') {
+                    textModeBtn.className = 'btn btn-secondary';
+                    voiceModeBtn.className = 'btn btn-primary';
+                } else {
+                    textModeBtn.className = 'btn btn-secondary';
+                    voiceModeBtn.className = 'btn btn-secondary';
+                }
+            }
+
+            // Atualizar status da IA
+            function updateAiStatus() {
+                if (isAiSpeaking) {
+                    aiStatus.textContent = 'IA falando...';
+                    indicatorDot.style.animation = 'none';
+                } else if (isListening) {
+                    aiStatus.textContent = 'IA ouvindo...';
+                    indicatorDot.style.animation = 'pulse 1.5s infinite';
+                } else {
+                    aiStatus.textContent = 'IA em espera';
+                    indicatorDot.style.animation = 'none';
+                }
+            }
+
+            // Mostrar mensagem de erro
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+
+            // Esconder mensagem de erro
+            function hideError() {
+                errorMessage.style.display = 'none';
+            }
+
+            // Adicionar animação de pulse
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                    50% {
+                        transform: scale(1.5);
+                        opacity: 0.7;
+                    }
+                    100% {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Event listeners
+            textModeBtn.addEventListener('click', startTextMode);
+            voiceModeBtn.addEventListener('click', startVoiceMode);
+            stopVoiceBtn.addEventListener('click', stopVoiceConversation);
+            voiceSelect.addEventListener('change', function() {
+                selectedVoice = this.value;
+                voiceMessage.textContent = 'Voz alterada. Clique em Testar Voz para ouvir.';
+            });
+            testVoiceBtn.addEventListener('click', testCurrentVoice);
+
+            // Inicializar
+            initSpeechRecognition();
+            initVoices();
+        });
+    </script>
+</body>
+</html>
